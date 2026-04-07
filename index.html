@@ -5,268 +5,723 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coach Familiar - Meal Prep Planner</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap');
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #f8fafc;
+
+        :root{
+            /* Tech palette (light) */
+            --neon:#2563eb;   /* electric blue */
+            --neon2:#06b6d4;  /* cyan */
+            --violet:#7c3aed; /* violet */
+            --danger:#ff3b3b;
+            --ink:#0b1220;
+            --muted:#475569;
+            --bg:#f6f7fb;
+            --surface: rgba(255,255,255,0.82);
         }
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
+
+        html, body { height: 100%; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+        }
+
+        .neon-accent{
+            color: var(--neon);
+            text-shadow: 0 0 18px rgba(37,99,235,0.15);
+        }
+
+        .neon-border{
+            border-color: rgba(37,99,235,0.22);
+            box-shadow: 0 0 0 1px rgba(37,99,235,0.14), 0 12px 32px rgba(2,6,23,0.10);
+        }
+
+        .card-surface{
+            background: var(--surface);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(2,6,23,0.08);
+            box-shadow: 0 10px 24px rgba(2,6,23,0.06);
+        }
+
+        .danger-badge{
+            background: rgba(255,59,59,0.08);
+            border: 1px solid rgba(255,59,59,0.25);
+            box-shadow: 0 10px 24px rgba(255,59,59,0.10);
+            color:#7f1d1d;
+        }
+
+        .tech-chip{
+            background: rgba(37,99,235,0.08);
+            border: 1px solid rgba(37,99,235,0.18);
+            color: rgba(37,99,235,0.95);
+        }
+
+        .tech-chip-2{
+            background: rgba(6,182,212,0.10);
+            border: 1px solid rgba(6,182,212,0.22);
+            color: rgba(6,182,212,0.95);
         }
     </style>
 </head>
-<body class="text-slate-900 min-h-screen pb-20">
+<body class="min-h-screen pb-24">
+    <div id="root"></div>
 
-    <!-- Header -->
-    <header class="p-6 border-b border-slate-200 bg-white/70 sticky top-0 z-50 backdrop-blur-md">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Coach Familiar <span class="text-slate-400 font-light text-lg">| Meal Prep</span>
-            </h1>
-            <div class="flex items-center gap-4 w-full md:w-auto">
-                <div class="relative w-full">
-                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </span>
-                    <input type="text" id="search-bar" placeholder="Buscar comida..." oninput="updateAll()" 
-                        class="pl-10 pr-4 py-2 w-full md:w-64 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-sm">
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="max-w-6xl mx-auto p-4 md:p-6 space-y-8">
-
-        <!-- Global Settings Section -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Alan Settings -->
-            <div class="glass-card bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
-                    <span class="w-2 h-6 bg-blue-500 rounded-full"></span> Perfil: Alan
-                </h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Calorías Totales</label>
-                        <input type="number" id="alan-cals" value="2400" onchange="updateAll()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none font-medium">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Proteína (g)</label>
-                        <input type="number" id="alan-prot" value="140" onchange="updateAll()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none font-medium">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Michelle Settings -->
-            <div class="glass-card bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-800">
-                    <span class="w-2 h-6 bg-rose-500 rounded-full"></span> Perfil: Michelle
-                </h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Calorías Totales</label>
-                        <input type="number" id="michelle-cals" value="2000" onchange="updateAll()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-rose-500 outline-none font-medium">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wider">Proteína (g)</label>
-                        <input type="number" id="michelle-prot" value="140" onchange="updateAll()" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 focus:ring-2 focus:ring-rose-500 outline-none font-medium">
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Meal Display Section -->
-        <div id="meals-container" class="grid grid-cols-1 gap-10">
-            <!-- Meals injected here -->
-        </div>
-
-    </main>
-
-    <script>
-        // Database de alimentos (Valores por 100g ya cocidos)
-        const foodDatabase = [
-            { id: 'beef', name: 'Carne Molida 88/12', type: 'protein', p: 26, f: 12, c: 0, cal: 215 },
-            { id: 'chicken', name: 'Pechuga de Pollo', type: 'protein', p: 31, f: 3.6, c: 0, cal: 165 },
-            { id: 'pasta', name: 'Pasta Bien Cocida', type: 'carb', p: 5, f: 1, c: 30, cal: 150 },
-            { id: 'sweet_potato', name: 'Camote Cocido', type: 'carb', p: 2, f: 0, c: 20, cal: 90 },
-            { id: 'sauce', name: 'Salsa de Tomate Nat.', type: 'extra', p: 1, f: 0, c: 4, cal: 20 }
-        ];
-
-        // Plantillas de comida
-        const mealTemplates = [
-            { 
-                name: "Pasta Bolognese con Carne", 
-                proteinId: 'beef', 
-                carbId: 'pasta',
-                extraId: 'sauce',
-                extraQty: 125 
+    <script type="text/babel">
+        // Fallback local: se usa solo si no se puede leer mealPrep.json (ejemplo: file://).
+        const mealPrepFallback = {
+          "version": "2026.04",
+          "couple": {
+            "Alan": {
+              "daily_macros": { "kcal": 2400, "p": 140, "c": 280, "f": 80 },
+              "base_portions": { "protein_cooked_g": 220, "carb_low_density_g": 350 }
             },
-            { 
-                name: "Pollo con Camote al Horno", 
-                proteinId: 'chicken', 
-                carbId: 'sweet_potato',
-                extraId: null,
-                extraQty: 0
+            "Michelle": {
+              "daily_macros": { "kcal": 2000, "p": 140, "c": 210, "f": 66 },
+              "base_portions": { "protein_cooked_g": 220, "carb_low_density_g": 230 },
+              "restrictions": ["strictly_no_peanuts"]
+            }
+          },
+          "meal_options": [
+            {
+              "id": 1,
+              "name": "Carne de Res con Pasta o Papa",
+              "description": "Carne molida 90/10 o Ribeye magro con pasta bien cocida o papas",
+              "ingredients": ["Carne magra", "Pasta/Papa", "Salsa de tomate"],
+              "biohacking_note": "Caminata de 10 min post-ingesta para control glucémico.",
+              "macros_est": {
+                "Alan": { "kcal": 740, "p": 58, "c": 80, "f": 22 },
+                "Michelle": { "kcal": 580, "p": 56, "c": 52, "f": 20 }
+              },
+              "weigh_plan": {
+                "Alan": [
+                  { "label": "Carne (cocida)", "amount": 200, "unit": "g", "equiv": { "p": 58 } },
+                  { "label": "Pasta/Papa (cocida)", "amount": 350, "unit": "g", "equiv": { "c": 80 } }
+                ],
+                "Michelle": [
+                  { "label": "Carne (cocida)", "amount": 193, "unit": "g", "equiv": { "p": 56 } },
+                  { "label": "Pasta/Papa (cocida)", "amount": 230, "unit": "g", "equiv": { "c": 52 } }
+                ]
+              }
             },
-            { 
-                name: "Cena: Pasta con Carne Molida", 
-                proteinId: 'beef', 
-                carbId: 'pasta',
-                extraId: null,
-                extraQty: 0
+            {
+              "id": 2,
+              "name": "Pollo con Arroz o Camote",
+              "description": "Pechuga de pollo con arroz blanco o camote al vapor",
+              "ingredients": ["Pechuga de pollo", "Arroz/Camote", "Mantequilla/Oliva"],
+              "biohacking_note": "Enfriar carbos 12h antes para crear almidón resistente.",
+              "macros_est": {
+                "Alan": { "kcal": 810, "p": 64, "c": 100, "f": 18 },
+                "Michelle": { "kcal": 730, "p": 70, "c": 72, "f": 14 }
+              },
+              "weigh_plan": {
+                "Alan": [
+                  { "label": "Pollo (cocido)", "amount": 206, "unit": "g", "equiv": { "p": 64 } },
+                  { "label": "Arroz/Camote (cocido)", "amount": 350, "unit": "g", "equiv": { "c": 100 } }
+                ],
+                "Michelle": [
+                  { "label": "Pollo (cocido)", "amount": 226, "unit": "g", "equiv": { "p": 70 } },
+                  { "label": "Arroz/Camote (cocido)", "amount": 230, "unit": "g", "equiv": { "c": 72 } }
+                ]
+              }
+            },
+            {
+              "id": 3,
+              "name": "Sourdough Snack",
+              "description": "Pan de masa madre (24h fermento) con mantequilla",
+              "alan_portion": "160g pan + 35g mantequilla",
+              "michelle_portion": "120g pan + 25g mantequilla",
+              "macros_est": {
+                "Alan": { "kcal": 850, "p": 18, "c": 100, "f": 40 },
+                "Michelle": { "kcal": 690, "p": 14, "c": 86, "f": 32 }
+              },
+              "weigh_plan": {
+                "Alan": [
+                  { "label": "Pan sourdough", "amount": 160, "unit": "g", "equiv": { "c": 100 } },
+                  { "label": "Mantequilla", "amount": 35, "unit": "g", "equiv": { "f": 40 } }
+                ],
+                "Michelle": [
+                  { "label": "Pan sourdough", "amount": 120, "unit": "g", "equiv": { "c": 86 } },
+                  { "label": "Mantequilla", "amount": 25, "unit": "g", "equiv": { "f": 32 } }
+                ]
+              }
+            },
+            {
+              "id": 4,
+              "name": "Yogurt & Apple Bowl (Michelle Swap)",
+              "description": "Intercambio de snack para Michelle",
+              "michelle_portion": "200g Yogurt Griego + 1 Manzana + Canela + 60g Pan",
+              "note": "Alta saciedad y salud intestinal.",
+              "macros_est": {
+                "Michelle": { "kcal": 520, "p": 26, "c": 62, "f": 18 }
+              },
+              "weigh_plan": {
+                "Michelle": [
+                  { "label": "Yogurt griego", "amount": 200, "unit": "g", "equiv": { "p": 26 } },
+                  { "label": "Pan", "amount": 60, "unit": "g", "equiv": { "c": 62 } },
+                  { "label": "Manzana", "amount": 1, "unit": "pza", "equiv": { "f": 18 } }
+                ]
+              }
             }
-        ];
+          ],
+          "recovery_stack": {
+            "nightly": ["Magnesio Glicinato", "Ashwagandha", "Melena de León"],
+            "physical": ["Sauna 20min", "Cold Plunge 3min"]
+          }
+        };
 
-        function calculateMeal(totalCals, totalProt, template) {
-            const mealCals = totalCals / 3;
-            const mealProtTarget = totalProt / 3;
+        const clampRound = (n) => Math.round(Number.isFinite(n) ? n : 0);
+        const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-            const proteinFood = foodDatabase.find(f => f.id === template.proteinId);
-            const carbFood = foodDatabase.find(f => f.id === template.carbId);
-            const extraFood = template.extraId ? foodDatabase.find(f => f.id === template.extraId) : null;
+        // Datos para cálculos del "mínimo" y del gasto estimado LISS.
+        // (Se basan en la info que compartiste: peso / estatura / SMM)
+        const trainingProfiles = {
+          Alan: { weightKg: 105.5, heightCm: 180, smmKg: 46.1 },
+          Michelle: { weightKg: 73, heightCm: 165, smmKg: 27 },
+        };
 
-            const proteinQty = (mealProtTarget / proteinFood.p) * 100;
-            const proteinCals = (proteinQty / 100) * proteinFood.cal;
-            const extraCals = extraFood ? (template.extraQty / 100) * extraFood.cal : 0;
-            
-            const remainingCals = mealCals - proteinCals - extraCals;
-            const carbQty = (remainingCals / carbFood.cal) * 100;
-
-            return {
-                protein: { name: proteinFood.name, qty: Math.round(proteinQty) },
-                carb: { name: carbFood.name, qty: Math.round(carbQty) },
-                extra: extraFood ? { name: extraFood.name, qty: template.extraQty } : null,
-                totalMealCals: Math.round(mealCals),
-                totalMealProt: Math.round(mealProtTarget)
-            };
+        function leanFactor(weightKg, heightCm, smmKg) {
+          const leanRatio = smmKg / weightKg; // fracción de masa magra
+          const heightM = heightCm / 100;
+          // Ajuste heurístico: más lean mass y mayor estatura => ligeramente más gasto a igual MET.
+          const adj = (leanRatio - 0.40) * 0.35 + (heightM - 1.70) * 0.05;
+          return clamp(1 + adj, 0.88, 1.12);
         }
 
-        function renderMeals() {
-            const alanCals = parseFloat(document.getElementById('alan-cals').value) || 0;
-            const alanProt = parseFloat(document.getElementById('alan-prot').value) || 0;
-            const michelleCals = parseFloat(document.getElementById('michelle-cals').value) || 0;
-            const michelleProt = parseFloat(document.getElementById('michelle-prot').value) || 0;
-            const searchTerm = document.getElementById('search-bar').value.toLowerCase();
+        function estimateStrengthKcal(sets, reps, rir, training) {
+          const safeSets = Math.max(0, Number(sets) || 0);
+          const safeReps = clamp(Number(reps) || 0, 1, 30);
+          const safeRir = clamp(Number(rir) || 0, 0, 5);
 
-            const container = document.getElementById('meals-container');
-            container.innerHTML = '';
+          // Duración por set (trabajo) y descanso aproximado según reps/RIR.
+          const workMinPerSet = 0.30 + safeReps * 0.045;
+          const restMinPerSet = clamp(0.9 + (3 - safeRir) * 0.35, 0.6, 2.2);
+          const totalMinutes = safeSets * (workMinPerSet + restMinPerSet);
 
-            const filteredMeals = mealTemplates.filter(m => m.name.toLowerCase().includes(searchTerm));
+          // MET de pesas ajustado por cercanía al fallo (RIR), rango de reps y composición corporal.
+          const leanRatio = training.smmKg / training.weightKg;
+          const metBase = 4.4;
+          const rirAdj = (3 - safeRir) * 0.45;
+          const repsAdj = safeReps <= 6 ? 0.7 : safeReps <= 12 ? 0.35 : 0.1;
+          const leanAdj = (leanRatio - 0.38) * 1.4;
+          const metStrength = clamp(metBase + rirAdj + repsAdj + leanAdj, 3.8, 7.2);
 
-            if (filteredMeals.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-slate-200">
-                        <p class="text-slate-400 font-medium">No se encontraron comidas que coincidan con tu búsqueda.</p>
-                    </div>
-                `;
-                return;
-            }
+          return metStrength * training.weightKg * (totalMinutes / 60);
+        }
 
-            filteredMeals.forEach((template, index) => {
-                const alanMeal = calculateMeal(alanCals, alanProt, template);
-                const michelleMeal = calculateMeal(michelleCals, michelleProt, template);
+        function estimateLissKcal(lissMinutes, metLiss, weightKg, heightCm, smmKg) {
+          const MET_liss = clamp(Number(metLiss) || 3.2, 2.0, 6.0);
+          const factor = leanFactor(weightKg, heightCm, smmKg);
+          return MET_liss * factor * weightKg * (lissMinutes / 60);
+        }
 
-                const mealCard = `
-                    <div class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div class="flex items-center gap-3 mb-6 px-2">
-                            <div class="bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-lg shadow-blue-200">
-                                ${index + 1}
-                            </div>
-                            <h3 class="text-xl md:text-2xl font-bold text-slate-800 uppercase tracking-tight">
-                                ${template.name}
-                            </h3>
+        function estimateLissMinutesForTarget(targetKcal, sets, reps, rir, metLiss, training) {
+          const strengthKcal = estimateStrengthKcal(sets, reps, rir, training);
+          const MET_liss = clamp(Number(metLiss) || 3.2, 2.0, 6.0);
+          const factor = leanFactor(training.weightKg, training.heightCm, training.smmKg);
+          const kcalPerMin = MET_liss * factor * training.weightKg / 60;
+          const remaining = targetKcal - strengthKcal;
+          if (remaining <= 0) return 0;
+          return remaining / kcalPerMin;
+        }
+
+        function formatEquiv(equiv) {
+          if (!equiv) return "";
+          const parts = [];
+          if (Number.isFinite(equiv.kcal)) parts.push(`${equiv.kcal} kcal`);
+          if (Number.isFinite(equiv.p)) parts.push(`${equiv.p}g P`);
+          if (Number.isFinite(equiv.c)) parts.push(`${equiv.c}g C`);
+          if (Number.isFinite(equiv.f)) parts.push(`${equiv.f}g F`);
+          return parts.join(" | ");
+        }
+
+        function digitsOnly(value) {
+          return String(value ?? "").replace(/[^\d]/g, "");
+        }
+
+        function decimalOnly(value) {
+          const cleaned = String(value ?? "").replace(/[^\d.]/g, "");
+          const firstDot = cleaned.indexOf(".");
+          if (firstDot === -1) return cleaned;
+          return cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, "");
+        }
+
+        function SegmentedToggle({ value, onChange, options = ["Alan", "Michelle"] }) {
+          return (
+            <div className="card-surface rounded-2xl p-1 flex gap-1">
+              {options.map((opt) => {
+                const active = opt === value;
+                return (
+                  <button
+                    key={opt}
+                    onClick={() => onChange(opt)}
+                    className={[
+                      "flex-1 text-sm md:text-base rounded-xl py-3 font-bold transition",
+                      active
+                        ? "neon-accent bg-[rgba(37,99,235,0.10)] neon-border border border-[rgba(37,99,235,0.22)]"
+                        : "bg-white/70 border border-transparent hover:border-[rgba(2,6,23,0.14)] text-slate-700",
+                    ].join(" ")}
+                    aria-pressed={active}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+          );
+        }
+
+        function MacroChips({ macros }) {
+          if (!macros) return null;
+          return (
+            <div className="flex flex-wrap gap-2">
+              <span className="px-2.5 py-1 rounded-full border border-slate-200 bg-white text-slate-700 text-[11px] font-extrabold">
+                {macros.kcal} kcal
+              </span>
+              <span className="px-2.5 py-1 rounded-full tech-chip text-[11px] font-extrabold">
+                {macros.p}g P
+              </span>
+              <span className="px-2.5 py-1 rounded-full tech-chip-2 text-[11px] font-extrabold">
+                {macros.c}g C
+              </span>
+              <span className="px-2.5 py-1 rounded-full border border-[rgba(124,58,237,0.22)] bg-[rgba(124,58,237,0.08)] text-[11px] font-extrabold" style={{ color: "var(--violet)" }}>
+                {macros.f}g F
+              </span>
+            </div>
+          );
+        }
+
+        function ProfilePortionBlock({ profileKey, mealOption }) {
+          const macrosEst = mealOption?.macros_est?.[profileKey] || null;
+          const weighItems = mealOption?.weigh_plan?.[profileKey] || null;
+          const portionText = profileKey === "Alan" ? mealOption.alan_portion : mealOption.michelle_portion;
+
+          const titleStyles =
+            profileKey === "Alan"
+              ? "text-slate-900"
+              : "text-slate-900";
+
+          return (
+            <div className="rounded-2xl border border-slate-200 bg-white/75 p-3 md:p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className={["text-base md:text-lg font-extrabold", titleStyles].join(" ")}>
+                    {profileKey}
+                  </div>
+                  <div className="text-xs uppercase tracking-widest text-slate-500 font-bold mt-1">
+                    Porciones para pesar (rápido)
+                  </div>
+                </div>
+                <MacroChips macros={macrosEst} />
+              </div>
+
+              {Array.isArray(weighItems) && weighItems.length > 0 ? (
+                <div className="mt-3 grid grid-cols-1 gap-2">
+                  {weighItems.map((it) => (
+                    <div
+                      key={`${profileKey}-${it.label}-${it.amount}${it.unit}`}
+                      className="rounded-2xl border border-slate-200 bg-white p-3"
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="text-sm md:text-base font-extrabold text-slate-800">{it.label}</div>
+                        <div className="text-xs uppercase tracking-widest text-slate-500 font-bold">PESA</div>
+                      </div>
+                      <div className="mt-1.5 text-3xl md:text-4xl font-black leading-none text-slate-900">
+                        {it.amount}
+                        <span className="text-sm md:text-base font-black ml-1.5 text-slate-700">{it.unit}</span>
+                      </div>
+                      {it.equiv ? (
+                        <div className="text-xs md:text-sm text-slate-700 mt-1.5 font-bold">
+                          Equivale a <span className="neon-accent font-extrabold">{formatEquiv(it.equiv)}</span>
                         </div>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                            <!-- Alan Meal Card -->
-                            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200 ring-1 ring-blue-500/5">
-                                <div class="bg-blue-50/50 p-5 border-b border-slate-100 flex justify-between items-center">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-3 h-3 rounded-full bg-blue-500 animate-pulse"></div>
-                                        <span class="font-bold text-blue-700 tracking-wide">ALAN</span>
-                                    </div>
-                                    <div class="flex gap-3">
-                                        <span class="text-xs font-bold bg-white text-blue-600 px-3 py-1 rounded-full border border-blue-100 shadow-sm uppercase">${alanMeal.totalMealCals} kcal</span>
-                                        <span class="text-xs font-bold bg-blue-600 text-white px-3 py-1 rounded-full shadow-sm uppercase">${alanMeal.totalMealProt}g Prot</span>
-                                    </div>
-                                </div>
-                                <div class="p-8 space-y-5">
-                                    <div class="group flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-blue-200 transition-all">
-                                        <div>
-                                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Proteína</p>
-                                            <p class="font-bold text-slate-700 group-hover:text-blue-600 transition-colors">${alanMeal.protein.name}</p>
-                                        </div>
-                                        <div class="text-3xl font-black text-blue-600">${alanMeal.protein.qty}<span class="text-sm font-bold ml-1">g</span></div>
-                                    </div>
-                                    <div class="group flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-emerald-200 transition-all">
-                                        <div>
-                                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Carbohidrato</p>
-                                            <p class="font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">${alanMeal.carb.name}</p>
-                                        </div>
-                                        <div class="text-3xl font-black text-emerald-500">${alanMeal.carb.qty}<span class="text-sm font-bold ml-1">g</span></div>
-                                    </div>
-                                    ${alanMeal.extra ? `
-                                    <div class="flex justify-between items-center p-4 bg-indigo-50/30 rounded-2xl border border-indigo-100">
-                                        <div>
-                                            <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Acompañamiento</p>
-                                            <p class="font-bold text-slate-600">${alanMeal.extra.name}</p>
-                                        </div>
-                                        <div class="text-2xl font-bold text-indigo-500">${alanMeal.extra.qty}<span class="text-sm font-bold ml-1">g</span></div>
-                                    </div>` : ''}
-                                </div>
-                            </div>
-
-                            <!-- Michelle Meal Card -->
-                            <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200 ring-1 ring-rose-500/5">
-                                <div class="bg-rose-50/50 p-5 border-b border-slate-100 flex justify-between items-center">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></div>
-                                        <span class="font-bold text-rose-700 tracking-wide">MICHELLE</span>
-                                    </div>
-                                    <div class="flex gap-3">
-                                        <span class="text-xs font-bold bg-white text-rose-600 px-3 py-1 rounded-full border border-rose-100 shadow-sm uppercase">${michelleMeal.totalMealCals} kcal</span>
-                                        <span class="text-xs font-bold bg-rose-600 text-white px-3 py-1 rounded-full shadow-sm uppercase">${michelleMeal.totalMealProt}g Prot</span>
-                                    </div>
-                                </div>
-                                <div class="p-8 space-y-5">
-                                    <div class="group flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-rose-200 transition-all">
-                                        <div>
-                                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Proteína</p>
-                                            <p class="font-bold text-slate-700 group-hover:text-rose-600 transition-colors">${michelleMeal.protein.name}</p>
-                                        </div>
-                                        <div class="text-3xl font-black text-rose-500">${michelleMeal.protein.qty}<span class="text-sm font-bold ml-1">g</span></div>
-                                    </div>
-                                    <div class="group flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-emerald-200 transition-all">
-                                        <div>
-                                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Carbohidrato</p>
-                                            <p class="font-bold text-slate-700 group-hover:text-emerald-600 transition-colors">${michelleMeal.carb.name}</p>
-                                        </div>
-                                        <div class="text-3xl font-black text-emerald-500">${michelleMeal.carb.qty}<span class="text-sm font-bold ml-1">g</span></div>
-                                    </div>
-                                    ${michelleMeal.extra ? `
-                                    <div class="flex justify-between items-center p-4 bg-indigo-50/30 rounded-2xl border border-indigo-100">
-                                        <div>
-                                            <p class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-1">Acompañamiento</p>
-                                            <p class="font-bold text-slate-600">${michelleMeal.extra.name}</p>
-                                        </div>
-                                        <div class="text-2xl font-bold text-indigo-500">${michelleMeal.extra.qty}<span class="text-sm font-bold ml-1">g</span></div>
-                                    </div>` : ''}
-                                </div>
-                            </div>
-                        </div>
+                      ) : null}
                     </div>
-                `;
-                container.innerHTML += mealCard;
-            });
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 text-slate-700 font-bold">
+                  Sin porciones definidas para {profileKey}.
+                </div>
+              )}
+
+              {portionText ? (
+                <div className="mt-4 rounded-2xl bg-slate-50 border border-slate-200 p-4">
+                  <div className="text-xs uppercase tracking-widest text-slate-500 font-bold">
+                    Notas / porción detallada
+                  </div>
+                  <div className="text-base md:text-lg font-bold mt-1 text-slate-800">{portionText}</div>
+                </div>
+              ) : null}
+            </div>
+          );
         }
 
-        function updateAll() {
-            renderMeals();
+        function MealCardCompare({ mealOption, index }) {
+          const hasAlan = !!mealOption?.weigh_plan?.Alan || !!mealOption?.macros_est?.Alan || !!mealOption?.alan_portion;
+          const hasMichelle = !!mealOption?.weigh_plan?.Michelle || !!mealOption?.macros_est?.Michelle || !!mealOption?.michelle_portion;
+
+          return (
+            <article className="card-surface rounded-3xl p-3.5 md:p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-slate-900 tech-chip">
+                    {index + 1}
+                  </div>
+                  <h3 className="text-xl md:text-2xl font-extrabold">{mealOption.name}</h3>
+                </div>
+              </div>
+
+              <p className="text-base md:text-lg text-slate-700 mt-3">{mealOption.description}</p>
+
+              <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                {hasAlan ? <ProfilePortionBlock profileKey="Alan" mealOption={mealOption} /> : null}
+                {hasMichelle ? <ProfilePortionBlock profileKey="Michelle" mealOption={mealOption} /> : null}
+              </div>
+
+              {mealOption.biohacking_note ? (
+                <details className="mt-3 rounded-2xl border border-[rgba(124,58,237,0.18)] bg-[rgba(124,58,237,0.04)] px-3 py-2">
+                  <summary className="list-none cursor-pointer flex items-center justify-end gap-2 text-xs font-extrabold select-none" style={{ color: "var(--violet)" }}>
+                    <span title="Ver nota bio-hacking">⚡ Bio-hacking</span>
+                  </summary>
+                  <div className="text-sm md:text-base mt-2 text-slate-700">{mealOption.biohacking_note}</div>
+                </details>
+              ) : null}
+
+              {Array.isArray(mealOption.ingredients) && mealOption.ingredients.length > 0 ? (
+                <div className="mt-4">
+                  <div className="text-xs uppercase tracking-widest text-slate-500 font-bold">Ingredientes</div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {mealOption.ingredients.map((ing) => (
+                      <span
+                        key={ing}
+                        className="px-3 py-2 rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white/70 text-base text-slate-800"
+                      >
+                        {ing}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {mealOption.note ? (
+                <div className="mt-4 text-base md:text-lg text-slate-700">
+                  <span className="font-extrabold neon-accent">Nota:</span> {mealOption.note}
+                </div>
+              ) : null}
+            </article>
+          );
         }
 
-        window.onload = renderMeals;
+        // App principal con dos vistas: "Meal Prep" y "Ejercicio".
+        function App() {
+          const [screenView, setScreenView] = React.useState("Meal Prep");
+          const [calcProfileKey, setCalcProfileKey] = React.useState("Alan");
+
+          const [mealPrepData, setMealPrepData] = React.useState(mealPrepFallback);
+
+          React.useEffect(() => {
+            fetch("mealPrep.json")
+              .then((r) => r.json())
+              .then((data) => setMealPrepData(data))
+              .catch(() => {
+                // Si no se puede leer el JSON (por ejemplo, file://), usamos el fallback embebido.
+              });
+          }, []);
+
+          const alanDaily = mealPrepData?.couple?.Alan?.daily_macros || {};
+          const michelleDaily = mealPrepData?.couple?.Michelle?.daily_macros || {};
+          const meals = mealPrepData.meal_options;
+
+          const training = trainingProfiles[calcProfileKey];
+          const minSets = clamp(Math.round(training.smmKg * 0.25), 4, 16);
+
+          // Pesos de comida se leen de mealPrep.json → weigh_plan por comida/perfil.
+
+          const [targetKcalInput, setTargetKcalInput] = React.useState("600");
+          const [setsInput, setSetsInput] = React.useState(String(minSets));
+          const [repsInput, setRepsInput] = React.useState("6");
+          const [rirInput, setRirInput] = React.useState("2");
+          const [lissMinutesInput, setLissMinutesInput] = React.useState("45");
+          const [lissMetInput, setLissMetInput] = React.useState("3.2");
+
+          const targetKcal = Number(targetKcalInput) || 0;
+          const sets = Number(setsInput) || 0;
+          const reps = Number(repsInput) || 0;
+          const rir = Number(rirInput) || 0;
+          const lissMinutes = Number(lissMinutesInput) || 0;
+          const lissMet = Number(lissMetInput) || 0;
+
+          React.useEffect(() => {
+            const newMinSets = clamp(Math.round(trainingProfiles[calcProfileKey].smmKg * 0.25), 4, 16);
+            setSetsInput(String(newMinSets));
+            // Recomendación inicial para targetKcal manteniendo tus inputs como estimación.
+            const rec = estimateLissMinutesForTarget(
+              targetKcal,
+              newMinSets,
+              reps,
+              rir,
+              lissMet,
+              trainingProfiles[calcProfileKey]
+            );
+            setLissMinutesInput(String(Math.max(0, Math.round(rec / 5) * 5)));
+          }, [calcProfileKey]);
+
+          const strengthKcal = estimateStrengthKcal(sets, reps, rir, training);
+          const lissKcal = estimateLissKcal(lissMinutes, lissMet, training.weightKg, training.heightCm, training.smmKg);
+          const totalKcal = strengthKcal + lissKcal;
+
+          const kcalPerMinLiss = estimateLissKcal(1, lissMet, training.weightKg, training.heightCm, training.smmKg);
+
+          const neededTo500 = Math.max(0, 500 - totalKcal);
+          const neededTo700 = Math.max(0, totalKcal - 700);
+          const targetNeededLissMinutes = Math.max(
+            0,
+            Math.ceil(((targetKcal - strengthKcal) / kcalPerMinLiss) / 5) * 5
+          );
+
+          const recForMinSets500 = Math.ceil(
+            estimateLissMinutesForTarget(500, minSets, reps, rir, lissMet, training) / 5
+          ) * 5;
+          const recForMinSets700 = Math.ceil(
+            estimateLissMinutesForTarget(700, minSets, reps, rir, lissMet, training) / 5
+          ) * 5;
+
+          return (
+            <div className="min-h-screen">
+              <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-5">
+                <header className="space-y-3">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
+                    <div>
+                      <div className="text-2xl md:text-3xl font-extrabold tracking-tight">
+                        Meal Prep Helper
+                      </div>
+                      <div className="text-slate-600 text-sm md:text-base font-semibold mt-1">
+                        Pesa <span className="neon-accent font-extrabold">(cocido)</span> • {mealPrepData.version}
+                      </div>
+                    </div>
+                    <div className="max-w-sm">
+                      <SegmentedToggle value={screenView} onChange={setScreenView} options={["Meal Prep", "Ejercicio"]} />
+                    </div>
+                  </div>
+
+                  {screenView === "Meal Prep" ? (
+                    <div className="card-surface neon-border rounded-3xl p-4 md:p-5">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="rounded-2xl border border-slate-200 bg-white/80 p-3">
+                          <div className="text-xs uppercase tracking-widest text-slate-500 font-bold mb-2">Target diario Alan</div>
+                          <div className="flex flex-wrap gap-2">
+                            <span className="px-2.5 py-1 rounded-full border border-slate-200 bg-white text-slate-700 text-[11px] font-extrabold">{alanDaily.kcal} kcal</span>
+                            <span className="px-2.5 py-1 rounded-full tech-chip text-[11px] font-extrabold">{alanDaily.p}g P</span>
+                            <span className="px-2.5 py-1 rounded-full tech-chip-2 text-[11px] font-extrabold">{alanDaily.c}g C</span>
+                            <span className="px-2.5 py-1 rounded-full border border-[rgba(124,58,237,0.22)] bg-[rgba(124,58,237,0.08)] text-[11px] font-extrabold" style={{ color: "var(--violet)" }}>{alanDaily.f}g F</span>
+                          </div>
+                        </div>
+                        <div className="rounded-2xl border border-slate-200 bg-white/80 p-3">
+                          <div className="text-xs uppercase tracking-widest text-slate-500 font-bold mb-2">Target diario Michelle</div>
+                          <div className="flex flex-wrap gap-2">
+                            <span className="px-2.5 py-1 rounded-full border border-slate-200 bg-white text-slate-700 text-[11px] font-extrabold">{michelleDaily.kcal} kcal</span>
+                            <span className="px-2.5 py-1 rounded-full tech-chip text-[11px] font-extrabold">{michelleDaily.p}g P</span>
+                            <span className="px-2.5 py-1 rounded-full tech-chip-2 text-[11px] font-extrabold">{michelleDaily.c}g C</span>
+                            <span className="px-2.5 py-1 rounded-full border border-[rgba(124,58,237,0.22)] bg-[rgba(124,58,237,0.08)] text-[11px] font-extrabold" style={{ color: "var(--violet)" }}>{michelleDaily.f}g F</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+
+                </header>
+
+                {screenView === "Meal Prep" ? (
+                <section className="space-y-4">
+                  {meals.map((mealOption, idx) => (
+                    <MealCardCompare
+                      key={mealOption.id}
+                      mealOption={mealOption}
+                      index={idx}
+                    />
+                  ))}
+                </section>
+                ) : (
+                <section className="card-surface neon-border rounded-3xl p-4 md:p-5 space-y-4 mt-2">
+                  <div className="flex items-baseline justify-between gap-4">
+                    <h2 className="text-2xl md:text-3xl font-extrabold neon-accent">Cálculo de Ejercicio (RIR + MET)</h2>
+                    <div className="text-slate-600 text-sm md:text-base font-semibold">
+                      Estimación en kcal
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="text-slate-700 text-sm md:text-base font-bold">
+                      Calculadora para:
+                    </div>
+                    <div className="max-w-xs">
+                      <SegmentedToggle value={calcProfileKey} onChange={setCalcProfileKey} />
+                    </div>
+                  </div>
+
+                  <div className="text-slate-600 text-sm md:text-base leading-relaxed">
+                    Mínimo sugerido (heurística por SMM): <span className="neon-accent font-extrabold">{minSets}</span> sets/día. Para cubrirlo con un gasto total de <span className="font-extrabold">500–700 kcal/día</span> con LISS (MET {lissMet}), el rango aproximado es:{" "}
+                    <span className="neon-accent font-extrabold">{recForMinSets500}–{recForMinSets700}</span> min/día.
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-200 bg-white/80 p-3">
+                    <div className="text-xs uppercase tracking-widest text-slate-500 font-bold mb-2">
+                      Parámetros usados ({calcProfileKey})
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <span className="px-2.5 py-1 rounded-full border border-slate-200 bg-white text-slate-700 text-[11px] font-extrabold">
+                        Peso: {training.weightKg} kg
+                      </span>
+                      <span className="px-2.5 py-1 rounded-full border border-slate-200 bg-white text-slate-700 text-[11px] font-extrabold">
+                        Estatura: {training.heightCm} cm
+                      </span>
+                      <span className="px-2.5 py-1 rounded-full border border-slate-200 bg-white text-slate-700 text-[11px] font-extrabold">
+                        SMM: {training.smmKg} kg
+                      </span>
+                    </div>
+                    <div className="text-xs text-slate-500 mt-2">
+                      Estas variables afectan el gasto estimado en pesas (junto con sets/reps/RIR) y LISS (junto con MET y minutos).
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                    <div className="lg:col-span-2 space-y-4">
+                      <div className="rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white/60 p-4">
+                        <div className="text-xs uppercase tracking-widest text-slate-500 font-bold">Calculadora</div>
+                        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                          <label className="block">
+                            <div className="text-sm font-bold text-slate-700 mb-2">Sets</div>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              value={setsInput}
+                              onChange={(e) => setSetsInput(digitsOnly(e.target.value))}
+                              className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 text-lg font-extrabold focus:outline-none focus:ring-2 focus:ring-[rgba(37,99,235,0.30)]"
+                            />
+                          </label>
+
+                          <label className="block">
+                            <div className="text-sm font-bold text-slate-700 mb-2">Reps por set</div>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              value={repsInput}
+                              onChange={(e) => setRepsInput(digitsOnly(e.target.value))}
+                              className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 text-lg font-extrabold focus:outline-none focus:ring-2 focus:ring-[rgba(37,99,235,0.30)]"
+                            />
+                          </label>
+
+                          <label className="block">
+                            <div className="text-sm font-bold text-slate-700 mb-2">RIR promedio</div>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              value={rirInput}
+                              onChange={(e) => setRirInput(digitsOnly(e.target.value))}
+                              className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 text-lg font-extrabold focus:outline-none focus:ring-2 focus:ring-[rgba(124,58,237,0.30)]"
+                            />
+                          </label>
+
+                          <label className="block">
+                            <div className="text-sm font-bold text-slate-700 mb-2">Minutos de LISS</div>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              value={lissMinutesInput}
+                              onChange={(e) => setLissMinutesInput(digitsOnly(e.target.value))}
+                              className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 text-lg font-extrabold focus:outline-none focus:ring-2 focus:ring-[rgba(6,182,212,0.30)]"
+                            />
+                          </label>
+                        </div>
+
+                        <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <label className="block">
+                            <div className="text-sm font-bold text-slate-700 mb-2">MET promedio LISS</div>
+                            <input
+                              type="text"
+                              inputMode="decimal"
+                              value={lissMetInput}
+                              onChange={(e) => setLissMetInput(decimalOnly(e.target.value))}
+                              className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 text-lg font-extrabold focus:outline-none focus:ring-2 focus:ring-[rgba(6,182,212,0.30)]"
+                            />
+                          </label>
+                          <div className="rounded-2xl border border-slate-200 bg-white/80 p-3">
+                            <div className="text-xs uppercase tracking-widest text-slate-500 font-bold">Referencia MET LISS</div>
+                            <div className="text-sm text-slate-700 mt-1 font-semibold">2.5 suave • 3.2 moderado • 4.0 rápido</div>
+                          </div>
+                        </div>
+
+                        <div className="mt-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="text-sm font-bold text-slate-700">Objetivo kcal/día</div>
+                            <div className="text-sm font-extrabold neon-accent">{targetKcal} kcal</div>
+                          </div>
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={targetKcalInput}
+                            onChange={(e) => setTargetKcalInput(digitsOnly(e.target.value))}
+                            className="w-full mt-2 bg-white border border-slate-200 rounded-2xl px-4 py-3 text-slate-900 text-lg font-extrabold focus:outline-none focus:ring-2 focus:ring-[rgba(37,99,235,0.30)]"
+                          />
+                          <div className="text-xs text-slate-500 mt-1">
+                            Estimación basada en MET, tiempo por set, descanso e intensidad (RIR).
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl border border-[rgba(148,163,184,0.22)] bg-white/60 p-4 space-y-3 lg:col-span-1">
+                      <div>
+                        <div className="text-xs uppercase tracking-widest text-slate-500 font-bold">Resultado</div>
+                        <div className="text-4xl font-extrabold neon-accent mt-2">
+                          {Math.round(totalKcal)} <span className="text-lg font-black text-slate-700">kcal</span>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-sm font-bold text-slate-700">Resistencia</span>
+                          <span className="text-sm font-extrabold text-slate-900">{Math.round(strengthKcal)} kcal</span>
+                        </div>
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="text-sm font-bold text-slate-700">LISS</span>
+                          <span className="text-sm font-extrabold text-slate-900">{Math.round(lissKcal)} kcal</span>
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl bg-white/80 border border-slate-200 p-3">
+                        {totalKcal < 500 ? (
+                          <div className="text-slate-700 text-sm font-bold">
+                            Faltan <span className="neon-accent font-extrabold">{Math.round(neededTo500)} kcal</span> para llegar a 500.
+                          </div>
+                        ) : totalKcal > 700 ? (
+                          <div className="text-slate-700 text-sm font-bold">
+                            Pasaste <span className="neon-accent font-extrabold">{Math.round(neededTo700)} kcal</span> del rango 700.
+                          </div>
+                        ) : (
+                          <div className="text-slate-700 text-sm font-bold">
+                            Estás dentro del rango <span className="neon-accent font-extrabold">500–700</span>.
+                          </div>
+                        )}
+                        <div className="text-xs text-slate-500 mt-2">
+                          Para tu objetivo (<span className="font-extrabold text-slate-700">{targetKcal}</span> kcal), LISS estimado:{" "}
+                          <span className="font-extrabold neon-accent">{targetNeededLissMinutes}</span> min/día.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+                )}
+              </div>
+            </div>
+          );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById("root"));
+        root.render(<App />);
     </script>
 </body>
 </html>

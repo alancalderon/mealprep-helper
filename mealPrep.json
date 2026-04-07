@@ -1,0 +1,100 @@
+{
+    "version": "2026.04",
+    "couple": {
+      "Alan": {
+        "daily_macros": { "kcal": 2400, "p": 140, "c": 280, "f": 80 },
+        "base_portions": { "protein_cooked_g": 220, "carb_low_density_g": 350 }
+      },
+      "Michelle": {
+        "daily_macros": { "kcal": 2000, "p": 140, "c": 210, "f": 66 },
+        "base_portions": { "protein_cooked_g": 220, "carb_low_density_g": 230 },
+        "restrictions": ["strictly_no_peanuts"]
+      }
+    },
+    "meal_options": [
+      {
+        "id": 1,
+        "name": "Carne de Res con Pasta o Papa",
+        "description": "Carne molida 90/10 o Ribeye magro con pasta bien cocida o papas",
+        "ingredients": ["Carne magra", "Pasta/Papa", "Salsa de tomate"],
+        "biohacking_note": "Caminata de 10 min post-ingesta para control glucémico.",
+        "macros_est": {
+          "Alan": { "kcal": 740, "p": 58, "c": 80, "f": 22 },
+          "Michelle": { "kcal": 580, "p": 56, "c": 52, "f": 20 }
+        },
+        "weigh_plan": {
+          "Alan": [
+            { "label": "Carne (cocida)", "amount": 200, "unit": "g", "equiv": { "p": 58 } },
+            { "label": "Pasta/Papa (cocida)", "amount": 350, "unit": "g", "equiv": { "c": 80 } }
+          ],
+          "Michelle": [
+            { "label": "Carne (cocida)", "amount": 193, "unit": "g", "equiv": { "p": 56 } },
+            { "label": "Pasta/Papa (cocida)", "amount": 230, "unit": "g", "equiv": { "c": 52 } }
+          ]
+        }
+      },
+      {
+        "id": 2,
+        "name": "Pollo con Arroz o Camote",
+        "description": "Pechuga de pollo con arroz blanco o camote al vapor",
+        "ingredients": ["Pechuga de pollo", "Arroz/Camote", "Mantequilla/Oliva"],
+        "biohacking_note": "Enfriar carbos 12h antes para crear almidón resistente.",
+        "macros_est": {
+          "Alan": { "kcal": 810, "p": 64, "c": 100, "f": 18 },
+          "Michelle": { "kcal": 730, "p": 70, "c": 72, "f": 14 }
+        },
+        "weigh_plan": {
+          "Alan": [
+            { "label": "Pollo (cocido)", "amount": 206, "unit": "g", "equiv": { "p": 64 } },
+            { "label": "Arroz/Camote (cocido)", "amount": 350, "unit": "g", "equiv": { "c": 100 } }
+          ],
+          "Michelle": [
+            { "label": "Pollo (cocido)", "amount": 226, "unit": "g", "equiv": { "p": 70 } },
+            { "label": "Arroz/Camote (cocido)", "amount": 230, "unit": "g", "equiv": { "c": 72 } }
+          ]
+        }
+      },
+      {
+        "id": 3,
+        "name": "Sourdough Snack",
+        "description": "Pan de masa madre (24h fermento) con mantequilla",
+        "alan_portion": "160g pan + 35g mantequilla",
+        "michelle_portion": "120g pan + 25g mantequilla",
+        "macros_est": {
+          "Alan": { "kcal": 850, "p": 18, "c": 100, "f": 40 },
+          "Michelle": { "kcal": 690, "p": 14, "c": 86, "f": 32 }
+        },
+        "weigh_plan": {
+          "Alan": [
+            { "label": "Pan sourdough", "amount": 160, "unit": "g", "equiv": { "c": 100 } },
+            { "label": "Mantequilla", "amount": 35, "unit": "g", "equiv": { "f": 40 } }
+          ],
+          "Michelle": [
+            { "label": "Pan sourdough", "amount": 120, "unit": "g", "equiv": { "c": 86 } },
+            { "label": "Mantequilla", "amount": 25, "unit": "g", "equiv": { "f": 32 } }
+          ]
+        }
+      },
+      {
+        "id": 4,
+        "name": "Yogurt & Apple Bowl (Michelle Swap)",
+        "description": "Intercambio de snack para Michelle",
+        "michelle_portion": "200g Yogurt Griego + 1 Manzana + Canela + 60g Pan",
+        "note": "Alta saciedad y salud intestinal.",
+        "macros_est": {
+          "Michelle": { "kcal": 520, "p": 26, "c": 62, "f": 18 }
+        },
+        "weigh_plan": {
+          "Michelle": [
+            { "label": "Yogurt griego", "amount": 200, "unit": "g", "equiv": { "p": 26 } },
+            { "label": "Pan", "amount": 60, "unit": "g", "equiv": { "c": 62 } },
+            { "label": "Manzana", "amount": 1, "unit": "pza", "equiv": { "f": 18 } }
+          ]
+        }
+      }
+    ],
+    "recovery_stack": {
+      "nightly": ["Magnesio Glicinato", "Ashwagandha", "Melena de León"],
+      "physical": ["Sauna 20min", "Cold Plunge 3min"]
+    }
+  }
